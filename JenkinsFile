@@ -24,7 +24,7 @@ String buildScript(List values){
 }
 
 String populateItems(List vpc_components){
-return """if(AWS Services.equals('VPC')){
+return """if(AWS_Services.equals('VPC')){
      return $vpc_components
      }
      else{
@@ -35,10 +35,10 @@ return """if(AWS Services.equals('VPC')){
 
 properties([
     parameters([
-        [$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'AWS Services', 
+        [$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'AWS_Services', 
         script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], 
         script: [classpath: [], sandbox: false,script:  amazon_components]]],
-        [$class: 'CascadeChoiceParameter', choiceType: 'PT_SINGLE_SELECT',name: 'VPC Components', referencedParameters: 'AWS Services', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: vpc_infra]]]
+        [$class: 'CascadeChoiceParameter', choiceType: 'PT_SINGLE_SELECT',name: 'VPC Components', referencedParameters: 'AWS_Services', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: vpc_infra]]]
         ])
 ])
 
