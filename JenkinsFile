@@ -12,6 +12,23 @@ def unstable() {
   echo "\033[1;33m[Unstable] \033[0m "
 }
 
+
+List vpc_components=["\"Select:selected\"","\"VPC\"","\"Subnet\"","\"Route Table\"","\"Internet gateway\""]
+
+String aws_components = buildScript(vpc_components)
+
+// Methods to build groovy scripts to populate data
+String buildScript(List values){
+  return "return $values"
+}
+
+properties([
+    parameters([
+        [$class: 'ChoiceParameter', choiceType: 'PT_SINGLE_SELECT',   name: 'AWS Services', 
+        script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], 
+        script: [classpath: [], sandbox: false,script:  aws_components]]]]),
+])
+
 pipeline {
   agent any
 
