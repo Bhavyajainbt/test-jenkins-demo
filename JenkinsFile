@@ -40,7 +40,7 @@ properties([
         script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], 
         script: [classpath: [], sandbox: false,script:  amazon_components]]],
         [$class: 'CascadeChoiceParameter', choiceType: 'PT_SINGLE_SELECT',name: 'VPC_Components', referencedParameters: 'AWS_Services', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: vpc_infra]]],
-        [$class: 'String', name: 'CIDR_BLOCK',referencedParameters:'VPC_Components',script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: cidr_block_sc]]]])
+        [$class: 'string', name: 'CIDR_BLOCK',referencedParameters:'VPC_Components',script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: cidr_block_sc]]]])
 ])
 
 pipeline {
