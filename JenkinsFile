@@ -16,11 +16,21 @@ List aws_components=["\"EC2 Instance\"","\"VPC\""]
 List vpc_components=["\"Select:selected\"","\"VPC\"","\"Subnet\"","\"Route Table\"","\"Internet gateway\""]
 
 String amazon_components = buildScript(aws_components)
-String vpc_infra = buildScript(vpc_components)
+String vpc_infra = populateItems(vpc_components)
 
 // Methods to build groovy scripts to populate data
 String buildScript(List values){
   return "return $values"
+}
+
+String populateItems(List vpc_components){
+return """if(AWS Services.equals('VPC')){
+     return $vpc_components
+     }
+     else{
+     return "No items"
+     }
+     """
 }
 
 properties([
