@@ -12,7 +12,7 @@ def unstable() {
   echo "\033[1;33m[Unstable] \033[0m "
 }
 
-List aws_components=["\"EC2 Instance\"","\"VPC\""]
+/*List aws_components=["\"EC2 Instance\"","\"VPC\""]
 List vpc_components=["\"Select:selected\"","\"VPC\"","\"Subnet\"","\"Route Table\"","\"Internet gateway\""]
 
 String amazon_components = buildScript(aws_components)
@@ -39,7 +39,7 @@ properties([
         script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["ERROR"]'], 
         script: [classpath: [], sandbox: false,script:  amazon_components]]],
         [$class: 'CascadeChoiceParameter', choiceType: 'PT_SINGLE_SELECT',name: 'VPC_Components', referencedParameters: 'AWS_Services', script: [$class: 'GroovyScript', fallbackScript: [classpath: [], sandbox: false, script: 'return ["error"]'], script: [classpath: [], sandbox: false, script: vpc_infra]]]])
-])
+])*/
 
 pipeline {
   agent any
@@ -51,7 +51,15 @@ pipeline {
 
   parameters {
     choice(name: 'REFRESH', choices: ['no', 'yes'], description: 'Please select refresh parameters as Yes if you want to refresh the parameters.')
+    choice(name: 'ENVIRONMENT',choices:['dev','test','qa'],description:'Please select the environment to deploy resources')
+    choice(name: 'REGION',choices:['us-east-1','us-east-2'],description:'Please select the region.')
+    choice(name: 'AWS_SERVICES',choices:['VPC','EC2','S3'],description:'Please select the aws service to provision.')
+    choice(name: 'VPC_COMPONENTS',choices:['vpc','subnets','route_table','interney_gateway'],description:'Please select the vpc components to provision.')
+    string(name: 'CIDR_BLOCK', defaultValue: '', description: 'Please enter the cidr block of vpc or subnet to create')
+    string(name: 'TAG_NAME', defaultValue: '', description: 'Please enter the tag name of vpc or subnet to create')
+    string(name: 'RESOURCE_NAME', defaultValue: '', description: 'Please enter the resource name')
     booleanParam(name: 'TOGGLE', defaultValue: false, description: 'Are you sure you want to perform this action?')
+
   }
 
   stages {
@@ -68,6 +76,21 @@ pipeline {
             sh 'whoami'
             currentBuild.result = 'ABORTED' //If you do not set the toggle flag to true before executing the build action, it will automatically abort the pipeline for any action.
           }
+        }
+      }
+    }
+
+    stage('Deploy VPC'){
+      when{
+        expression {
+          params.AWS_SERVICES == 'VPC' && params.VPC_COMPONENTS == 'vpc' && params.TOGGLE == true
+        }
+      }
+
+      withAWS(credentials: 'aws-credentials',region: "${REGION}"){
+        script {
+          sh "sudo chmod +x -R ${env.WORKSPACE}"
+          sh "terraform/terraform-deploy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${RESOURCE_NAME}"
         }
       }
     }
