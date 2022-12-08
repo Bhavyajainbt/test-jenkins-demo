@@ -91,9 +91,7 @@ pipeline {
     stage('Deploy VPC components'){
       when{
         expression {
-          params.ACTION == 'deploy' && params.AWS_SERVICES == 'VPC' && 
-          (params.VPC_COMPONENTS == 'vpc' || params.VPC_COMPONENTS == 'subnets' || params.VPC_COMPONENTS == 'route_table'
-          params.VPC_COMPONENTS == 'interney_gateway') && params.TOGGLE == true
+          params.ACTION == 'deploy' && params.AWS_SERVICES == 'VPC' && (params.VPC_COMPONENTS == 'vpc' || params.VPC_COMPONENTS == 'subnets' || params.VPC_COMPONENTS == 'route_table' || params.VPC_COMPONENTS == 'interney_gateway') && params.TOGGLE == true
         }
       }
 
