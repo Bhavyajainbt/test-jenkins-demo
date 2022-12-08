@@ -55,7 +55,7 @@ pipeline {
     choice(name: 'ENVIRONMENT',choices:['dev','test','qa'],description:'Please select the environment to deploy resources')
     choice(name: 'REGION',choices:['us-east-1','us-east-2'],description:'Please select the region.')
     choice(name: 'AWS_SERVICES',choices:['VPC','EC2','S3'],description:'Please select the aws service to provision.')
-    choice(name: 'VPC_COMPONENTS',choices:['vpc','subnets','route_table','interney_gateway'],description:'Please select the vpc components to provision.')
+    choice(name: 'VPC_COMPONENTS',choices:['','vpc','subnets','route_table','interney_gateway'],description:'Please select the vpc components to provision.')
     string(name: 'CIDR_BLOCK', defaultValue: '', description: 'Please enter the cidr block of vpc or subnet to create')
     string(name: 'TAG_NAME', defaultValue: '', description: 'Please enter the tag name of vpc or subnet to create')
     booleanParam(name: 'TOGGLE', defaultValue: false, description: 'Are you sure you want to perform this action?')
@@ -88,10 +88,12 @@ pipeline {
       }
     }
 
-    stage('Deploy VPC'){
+    stage('Deploy VPC components'){
       when{
         expression {
-          params.ACTION == 'deploy' && params.AWS_SERVICES == 'VPC' && params.VPC_COMPONENTS == 'vpc' && params.TOGGLE == true
+          params.ACTION == 'deploy' && params.AWS_SERVICES == 'VPC' && 
+          (params.VPC_COMPONENTS == 'vpc' || params.VPC_COMPONENTS == 'subnets' || params.VPC_COMPONENTS == 'route_table'
+          params.VPC_COMPONENTS == 'interney_gateway') && params.TOGGLE == true
         }
       }
 
@@ -99,7 +101,7 @@ pipeline {
         withAWS(credentials: 'aws-credentials',region: "${REGION}"){
           script {
             sh "sudo chmod +x -R ${env.WORKSPACE}"
-            sh "terraform/terraform-deploy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${REGION}"
+            sh "terraform/terraform-deploy-vpc.sh ${VPC_COMPONENTS} ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${REGION}"
           }
         }
       }

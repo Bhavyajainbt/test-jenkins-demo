@@ -1,18 +1,22 @@
 #!/bin/bash
 
-if [ $# -ne 4 ];then
-  echo "Please select environment and mention cidr block, tag name and region in which the resource has to be deployed."
+if [ $1 -eq "" ];then
+  echo "Please select the VPC component to provision"
   exit 0;
-fi
-env_dir=$1
-cidr_block=$2
-tag_name=$3
-region_name=$4
-
-cd terraform/
-echo "Moved to terraform remote directory"
-cd ${env_dir}
-echo "Moved to sub environment directory"
-terraform init
-echo "terraform init is successful"
-terraform apply -var vpc_cidr_block=${cidr_block} -var vpc_tag_name=${tag_name} -var vpc_region=${region_name} -target=aws_vpc.node-casted-vpc-dev  -auto-approve
+else
+  env_dir=$2
+  cidr_block=$3
+  tag_name=$4
+  region_name=$5
+  cd terraform/
+  cd ${env_dir}
+  if [ $1 -eq "vpc" ];then
+    terraform init
+    terraform apply -var vpc_cidr_block=${cidr_block} -var vpc_tag_name=${tag_name} -var vpc_region=${region_name} -target=aws_vpc.node-casted-vpc-dev  -auto-approve
+  elif [ $1 -eq "subnets" ];then
+    terraform init
+    terraform apply -var subnet_cidr_block=${cidr_block} -var subnet_tag_name=${tag_name} -var vpc_region=${region_name} -target=aws_subnet.node-casted-vpc-subnet  -auto-approve
+  else
+    echo "Invalid Resource selected"
+    exit 0
+  fi
