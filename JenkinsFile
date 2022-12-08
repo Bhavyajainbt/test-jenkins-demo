@@ -51,6 +51,7 @@ pipeline {
 
   parameters {
     choice(name: 'REFRESH', choices: ['no', 'yes'], description: 'Please select refresh parameters as Yes if you want to refresh the parameters.')
+    choice(name: 'ACTION',choices:['deploy','destroy'],description:'Please select the environment to deploy resources')
     choice(name: 'ENVIRONMENT',choices:['dev','test','qa'],description:'Please select the environment to deploy resources')
     choice(name: 'REGION',choices:['us-east-1','us-east-2'],description:'Please select the region.')
     choice(name: 'AWS_SERVICES',choices:['VPC','EC2','S3'],description:'Please select the aws service to provision.')
@@ -91,7 +92,7 @@ pipeline {
     stage('Deploy VPC'){
       when{
         expression {
-          params.AWS_SERVICES == 'VPC' && params.VPC_COMPONENTS == 'vpc' && params.TOGGLE == true
+          params.ACTION == 'deploy' && params.AWS_SERVICES == 'VPC' && params.VPC_COMPONENTS == 'vpc' && params.TOGGLE == true
         }
       }
 
@@ -100,6 +101,23 @@ pipeline {
           script {
             sh "sudo chmod +x -R ${env.WORKSPACE}"
             sh "terraform/terraform-deploy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${RESOURCE_NAME}"
+          }
+        }
+      }
+    }
+
+    stage('Destroy Resources'){
+      when{
+        expression {
+          params.ACTION == 'destroy' && params.TOGGLE == true
+        }
+      }
+
+      steps{
+        withAWS(credentials: 'aws-credentials',region: "${REGION}"){
+          script {
+            sh "sudo chmod +x -R ${env.WORKSPACE}"
+            sh "terraform/terraform-destroy-vpc.sh ${ENVIRONMENT}"
           }
         }
       }
