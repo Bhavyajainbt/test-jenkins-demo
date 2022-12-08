@@ -7,6 +7,10 @@ terraform {
    } 
 }
 
+variable "vpc_region" {
+  type = string
+}
+
 provider "aws" {
-  
+    region = var.vpc_region
 }

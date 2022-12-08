@@ -58,7 +58,6 @@ pipeline {
     choice(name: 'VPC_COMPONENTS',choices:['vpc','subnets','route_table','interney_gateway'],description:'Please select the vpc components to provision.')
     string(name: 'CIDR_BLOCK', defaultValue: '', description: 'Please enter the cidr block of vpc or subnet to create')
     string(name: 'TAG_NAME', defaultValue: '', description: 'Please enter the tag name of vpc or subnet to create')
-    string(name: 'RESOURCE_NAME', defaultValue: '', description: 'Please enter the resource name')
     booleanParam(name: 'TOGGLE', defaultValue: false, description: 'Are you sure you want to perform this action?')
 
   }
@@ -100,7 +99,7 @@ pipeline {
         withAWS(credentials: 'aws-credentials',region: "${REGION}"){
           script {
             sh "sudo chmod +x -R ${env.WORKSPACE}"
-            sh "terraform/terraform-deploy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${RESOURCE_NAME}"
+            sh "terraform/terraform-deploy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${REGION}"
           }
         }
       }
