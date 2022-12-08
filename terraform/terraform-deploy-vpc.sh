@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $1 -eq "" ];then
+if [ $1 = "" ];then
   echo "Please select the VPC component to provision"
   exit 0;
 else
