@@ -1,4 +1,4 @@
-variable "subnet_cidr_block" {
+/*variable "subnet_cidr_block" {
   type = string
 }
 
@@ -13,4 +13,4 @@ resource "aws_subnet" "node-casted-vpc-subnet" {
     tags = {
       "name" = var.subnet_tag_name
     }
-}
+}*/
