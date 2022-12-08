@@ -80,6 +80,14 @@ pipeline {
       }
     }
 
+    stage('GIT Checkout') {
+      steps {
+        script {
+          git branch: 'main', url: 'https://github.com/Bhavyajainbt/test-jenkins-demo.git'
+        }
+      }
+    }
+
     stage('Deploy VPC'){
       when{
         expression {
@@ -87,10 +95,12 @@ pipeline {
         }
       }
 
-      withAWS(credentials: 'aws-credentials',region: "${REGION}"){
-        script {
-          sh "sudo chmod +x -R ${env.WORKSPACE}"
-          sh "terraform/terraform-deploy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${RESOURCE_NAME}"
+      steps{
+        withAWS(credentials: 'aws-credentials',region: "${REGION}"){
+          script {
+            sh "sudo chmod +x -R ${env.WORKSPACE}"
+            sh "terraform/terraform-deploy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${RESOURCE_NAME}"
+          }
         }
       }
     }
