@@ -20,3 +20,4 @@ else
     echo "Invalid Resource selected"
     exit 0
   fi
+fi
