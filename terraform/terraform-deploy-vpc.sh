@@ -15,4 +15,4 @@ cd ${env_dir}
 echo "Moved to sub environment directory"
 terraform init
 echo "terraform init is successful"
-terraform apply -var vpc_cidr_block=${cidr_block} vpc_tag_name=${tag_name} vpc_resource_name=${resource_name} -target=aws_vpc.${resource_name}  -auto-approve
+terraform apply -var vpc_cidr_block=${cidr_block} -var vpc_tag_name=${tag_name} -var vpc_resource_name=${resource_name} -target=aws_vpc.${resource_name}  -auto-approve
