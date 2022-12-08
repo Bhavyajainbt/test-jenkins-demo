@@ -99,7 +99,7 @@ pipeline {
         withAWS(credentials: 'aws-credentials',region: "${REGION}"){
           script {
             sh "sudo chmod +x -R ${env.WORKSPACE}"
-            sh "terraform/terraform-deploy-vpc.sh ${VPC_COMPONENTS} ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${REGION}"
+            sh "terraform/terraform-deploy-vpc.sh ${params.VPC_COMPONENTS} ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${REGION}"
           }
         }
       }
