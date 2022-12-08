@@ -117,7 +117,7 @@ pipeline {
         withAWS(credentials: 'aws-credentials',region: "${REGION}"){
           script {
             sh "sudo chmod +x -R ${env.WORKSPACE}"
-            sh "terraform/terraform-destroy-vpc.sh ${ENVIRONMENT}"
+            sh "terraform/terraform-destroy-vpc.sh ${ENVIRONMENT} ${CIDR_BLOCK} ${TAG_NAME} ${RESOURCE_NAME}"
           }
         }
       }

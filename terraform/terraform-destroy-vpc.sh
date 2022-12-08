@@ -1,10 +1,13 @@
 #!/bin/bash
 
-if [ $# -ne 1 ];then
-  echo "Please select environment in which the resource has to be deployed."
+if [ $# -ne 4 ];then
+  echo "Please select environment and mention cidr block, tag name and resource name in which the resource has to be deployed."
   exit 0;
 fi
 env_dir=$1
+cidr_block=$2
+tag_name=$3
+resource_name=$4
 
 cd terraform/
 echo "Moved to terraform remote directory"
